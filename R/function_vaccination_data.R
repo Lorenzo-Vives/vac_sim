@@ -403,12 +403,29 @@ compute_n_birth <- function(year_start, N_year){
 
 compute_contact_matrix <- function(year_per_age){
   ## Define contact matrix
-  data(polymod)
+  data("polymod", package = "socialmixr", envir = environment())
+  age_limits <- cumsum(year_per_age) - year_per_age
+
+  ## Freeze the 2005 UK population used by socialmixr's former implicit
+  ## wpp2017 lookup.  Passing it explicitly avoids deprecated API calls and
+  ## preserves the contact matrix used by the original analysis exactly.
+  published_age_limits <- c(0, 1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 40)
+  if(!identical(as.numeric(age_limits), published_age_limits)){
+    stop("The frozen POLYMOD demography is defined for the published age bands only")
+  }
+  polymod_uk_population_2005 <- data.frame(
+    lower.age.limit = published_age_limits,
+    population = c(
+      690734, 690734, 690734, 690734, 690734, 711777,
+      2847110, 3826567, 3960166, 7661709, 8864593, 28961159
+    )
+  )
   ## Get the contact matrix from socialmixr
   contact <- socialmixr::contact_matrix(
     survey = polymod,
     countries = "United Kingdom",
-    age.limits = cumsum(year_per_age) - year_per_age,
+    survey_pop = polymod_uk_population_2005,
+    age_limits = age_limits,
     symmetric = TRUE)
   
   ## Transform the matrix to the (symetrical) transmission matrix

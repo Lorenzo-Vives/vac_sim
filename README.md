@@ -1,5 +1,9 @@
 This Github repository contains the code used to run age-stratified, metapopulation compartmental models using odin.dust with different scenarios for vaccination uptake. These models are used to analyse the dynamics of measles outbreaks in England between 2010 and 2019, and to simulate changes in vaccination coverage between 2010 and 2019. The generated simulations can me found in the models Output/models folder, figures are saved in the in the Figures folder and summary tables are saved in  the Output folder. The R folder contains all the scripts and functions.
 
+For an independent re-run of the reference simulation (without using the
+precomputed scenario output), see [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md)
+and run `Rscript R/replicate_reference.R`.
+
 The code for fitting the model can be found in a separate repo: https://github.com/alxsrobert/measles_england_sir and the results are published here: https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(24)00181-6/fulltext
 
 ## Installation

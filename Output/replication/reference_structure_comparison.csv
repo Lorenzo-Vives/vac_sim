@@ -1,0 +1,3 @@
+"dataset","class","n_strata","n_simulations","n_years","same_stratum_names"
+"new_replication","array",324,2500,10,TRUE
+"repository_original","array",324,2500,10,TRUE

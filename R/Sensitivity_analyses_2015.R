@@ -9,9 +9,9 @@
 options(scipen = 999)
 source("R/function_figures.R")
 source("R/function_vaccination_data.R")
+source("R/function_model_compatibility.R")
 
 ## Import libraries 
-devtools::install_github("alxsrobert/seirvodin")
 library(seirvodin)
 library(dplyr)
 library(socialmixr)
@@ -36,11 +36,13 @@ clean_mcmc_pars <- function(mcmc_pars){
 }
 
 
-create_scenario <- function(scenario_name, burnin = 5000, waning = "no", vax = "cprd"){
+create_scenario <- function(scenario_name, burnin = 5000, waning = "no",
+                            vax = "cprd", n_samples = 100, n_part = 25,
+                            model = compatible_seirv_age_region()){
   scenario <- scenario_name
-  # Number of simulations per sample
-  n_part <- 25
-  n_samples <- 100
+  if(n_samples < 2L || n_part < 2L){
+    stop("seirvodin 1.0 requires n_samples >= 2 and n_part >= 2 when aggreg_year = TRUE")
+  }
   
   #### Import data and model fit ####
   
@@ -59,7 +61,7 @@ create_scenario <- function(scenario_name, burnin = 5000, waning = "no", vax = "
   ## Import the different data streams into a list.
   # Use scenario to move between vaccine scenarios (early / early_timely etc..)
   all_data <- import_all_data(year_start = year_start, N_year = N_year, 
-                              scenario = scenario, vax = "cprd", regions = regions, 
+                              scenario = scenario, vax = vax, regions = regions,
                               year_per_age = year_per_age)
   
   
@@ -89,7 +91,7 @@ create_scenario <- function(scenario_name, burnin = 5000, waning = "no", vax = "
   
   all_output <- 
     seirvodin::generate_outbreaks(
-      model_run = pmcmc_run, model = seirvodin::seirv_age_region, 
+      model_run = pmcmc_run, model = model,
       list_specs = all_specs, list_data = all_data, n_part = n_part, 
       verbose = T, aggreg_year = TRUE  )
   
